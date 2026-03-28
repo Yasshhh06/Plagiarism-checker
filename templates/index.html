@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Plagiarism Checker</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('plagiarism-form');
+
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                const response = await fetch('/detect_plagiarism', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const encodedData = encodeURIComponent(JSON.stringify(data));
+                    window.location.href = `/results.html?data=${encodedData}`;
+                } else {
+                    console.error('Error:', response.statusText);
+                    alert('Error: Unable to fetch results. Please try again later.');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>PLAGIARISM CHECKER</h1>
+        <form id="plagiarism-form" enctype="multipart/form-data">
+            <label for="text_input">Enter Text:</label><br>
+            <textarea id="text_input" name="text_input" rows="4" cols="50"></textarea><br><br>
+            <label for="file_input">Upload File(txt, docx, pdf)</label><br>
+            <input type="file" id="file_input" name="file_input"><br><br>
+            <button type="submit">Check Plagiarism</button>
+        </form>
+    </div>
+</body>
+</html>

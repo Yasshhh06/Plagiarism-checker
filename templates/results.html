@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Plagiarism Results</title>
+</head>
+<body>
+    <div class="container">
+        <h1>PLAGIARISM RESULTS</h1>
+        <div id="results-container"></div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const resultsContainer = document.getElementById('results-container');
+
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedData = urlParams.get('data');
+
+            if (encodedData) {
+                const data = JSON.parse(decodeURIComponent(encodedData));
+                displayResults(data);
+            } else {
+                console.error('Error: No data found in URL parameter.');
+                resultsContainer.innerHTML = '<p>Error: No data found in URL parameter.</p>';
+            }
+
+            function displayResults(data) {
+                if ('text_input_similarity' in data) {
+                    const textInputPercentage = (data.text_input_similarity * 100).toFixed(2);
+                    createProgressBar('Text Input Similarity', textInputPercentage);
+                }
+
+                if ('file_similarity' in data) {
+                    const filePercentage = (data.file_similarity * 100).toFixed(2);
+                    createProgressBar('File Similarity', filePercentage);
+                }
+
+                if ('text_input_google_similarity_scores' in data) {
+                    const googleScores = data.text_input_google_similarity_scores;
+                    for (const url in googleScores) {
+                        resultsContainer.innerHTML += `<p>URL: <a href="${url}" target="_blank" class="url-link">${url}</a></p>`;
+                    }
+                }
+
+                if ('file_google_similarity_scores' in data) {
+                    const googleScores = data.file_google_similarity_scores;
+                    for (const url in googleScores) {
+                        resultsContainer.innerHTML += `<p>URL: <a href="${url}" target="_blank" class="url-link">${url}</a></p>`;
+                    }
+                }
+            }
+
+            function createProgressBar(label, percentage) {
+                const progressBarContainer = document.createElement('div');
+                progressBarContainer.className = 'progress';
+                const progressBar = document.createElement('div');
+                progressBar.className = 'progress-bar';
+                progressBar.style.width = `${percentage}%`;
+                progressBar.textContent = `${label}: ${percentage}%`;
+                progressBarContainer.appendChild(progressBar);
+                resultsContainer.appendChild(progressBarContainer);
+            }
+        });
+    </script>
+</body>
+</html>
