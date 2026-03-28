@@ -13,7 +13,7 @@ nlp = spacy.load("en_core_web_md")
 # Function to perform Google Custom Search and compare with online sources
 def compare_with_google(input_text):
     # Google Custom Search API key and CX (Custom Search Engine ID)
-    api_key = 'AIzaSyAf6IXzTkiFFV2CXfRf_YQ-LT9e9uRTCeM'
+    api_key = ''
     cx = 'd36fbb2b3c7414d4d'
     # Construct API request URL
     url = f'https://www.googleapis.com/customsearch/v1?q={input_text}&cx={cx}&key={api_key}'
